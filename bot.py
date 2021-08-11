@@ -71,12 +71,14 @@ async def on_ready():
 # Setup the game status task of the bot
 @tasks.loop(minutes=1.0)
 async def status_task():
-    statuses = ["with you!", "with Krypton!", f"{config['bot_prefix']}help", "with humans!"]
+    statuses = ["with you!", "with Krypton!",
+                f"{config['bot_prefix']}help", "with humans!"]
     await bot.change_presence(activity=discord.Game(random.choice(statuses)))
 
 
 # Removes the default help command of discord.py to be able to create our custom help command.
 bot.remove_command("help")
+
 
 if __name__ == "__main__":
     for file in os.listdir("./cogs"):
@@ -89,7 +91,7 @@ if __name__ == "__main__":
                 exception = f"{type(e).__name__}: {e}"
                 print(f"Failed to load extension {extension}\n{exception}")
 
-
+bot.question = []
 # The code in this event is executed every time someone sends a message, with or without the prefix
 @bot.event
 async def on_message(message):
@@ -99,11 +101,22 @@ async def on_message(message):
     # Ignores if a command is being executed by a blacklisted user
     with open("blacklist.json") as file:
         blacklist = json.load(file)
+
+    print(message)
+    print(message.content)
+    if message.content.startswith("<@&875059542415802400>"):
+        bot.question.append(message.id)
+        print(bot.question)
+
+    if message.content.lower().startswith("help"):
+        await message.channel.send("Enter commands starting with $ or enter $help for more information:)")
+
     if message.author.id in blacklist["ids"]:
         return
     await bot.process_commands(message)
 
 
+    
 # The code in this event is executed every time a command has been *successfully* executed
 @bot.event
 async def on_command_completion(ctx):
