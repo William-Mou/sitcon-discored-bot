@@ -91,7 +91,9 @@ if __name__ == "__main__":
                 exception = f"{type(e).__name__}: {e}"
                 print(f"Failed to load extension {extension}\n{exception}")
 
+# save all question msg id.
 bot.question = []
+
 # The code in this event is executed every time someone sends a message, with or without the prefix
 @bot.event
 async def on_message(message):
@@ -102,8 +104,7 @@ async def on_message(message):
     with open("blacklist.json") as file:
         blacklist = json.load(file)
 
-    print(message)
-    print(message.content)
+    # Identity group ID (@question)
     if message.content.startswith("<@&875059542415802400>"):
         bot.question.append(message.id)
         print(bot.question)
